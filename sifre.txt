@@ -1,0 +1,11 @@
+za admina:
+admin
+adminadmin7
+
+za sestru:
+sestra
+sestrasestra3
+
+za doktora:
+doktor
+doktordoktor5
