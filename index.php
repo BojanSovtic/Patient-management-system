@@ -65,8 +65,14 @@ switch ($modul) {
     case 'rDoctors':
         include './modules/reports/rDoctors.php';
         break;
+    case 'printXML':
+        include './modules/reports/printXML.php';
+        break;
+    case 'printXMLGeneric':
+        include './modules/reports/printXMLGeneric.php';
+        break;
     default:
-        // include DIR_TEMPLATE . 'error404.php';
+        include './modules/home.php';
         break;
 }
 

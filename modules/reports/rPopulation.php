@@ -6,87 +6,91 @@ try {
 
     // Dijabetes
     $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
+	count(DISTINCT(appointments.patient_id)) AS \"broj\",
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) AS \"godine\"
 FROM
 	patients
 	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
 	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
 	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
 WHERE
-	diagnoses.`latin` LIKE 'diabetes%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) < 19
-	")->fetchArray();
-    
-    $ispod18 = $query['broj'];
+	diagnoses.`latin` LIKE 'diabetes%'
+GROUP BY
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE())
+ORDER BY
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE())
+	")->fetchAll();
 
-    $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
+	
+	$ispod18 = 0;
+	$izmedju18i45 = 0;
+	$izmedju45i65 = 0;
+	$iznad65 = 0;
+	foreach ($query AS $row) {
+		if ($row['godine'] <= 18) {
+			$ispod18 += $row['broj'];
+		} else if ($row['godine'] <= 45) {
+			$izmedju18i45 += $row['broj'];
+		} else if ($row['godine'] <= 65) {
+			$izmedju45i65 += $row['broj'];
+		} else {
+			$iznad65 += $row['broj'];
+		}
+	}
+
+	$dijabetes = [
+		'ispod18' => $ispod18,
+		'izmedju18i45' =>  $izmedju18i45,
+		'izmedju45i65' => $izmedju45i65,
+		'iznad65' => $iznad65
+	];
+
+	$bolesti['dijabetes'] = $dijabetes;
+
+	// Depresija
+	$query = $db->query("SELECT 
+	count(DISTINCT(appointments.patient_id)) AS \"broj\",
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) AS \"godine\"
 FROM
 	patients
 	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
 	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
 	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
 WHERE
-	diagnoses.`latin` LIKE 'diabetes%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) >= 19 AND 
-    TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) <= 65
-	")->fetchArray();
-    
-    $ispod65 = $query['broj'];
+	diagnoses.`latin` LIKE 'depressio%'
+GROUP BY
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE())
+ORDER BY
+	TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE())
+	")->fetchAll();
+	
+	$ispod18Dep = 0;
+	$izmedju18i45Dep = 0;
+	$izmedju45i65Dep = 0;
+	$iznad65Dep = 0;
+	foreach ($query AS $row) {
+		if ($row['godine'] <= 18) {
+			$ispod18Dep += $row['broj'];
+		} else if ($row['godine'] <= 45) {
+			$izmedju18i45Dep += $row['broj'];
+		} else if ($row['godine'] <= 65) {
+			$izmedju45i65Dep += $row['broj'];
+		} else {
+			$iznad65Dep += $row['broj'];
+		}
+	}
 
-    $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
-FROM
-	patients
-	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
-	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
-	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
-WHERE
-	diagnoses.`latin` LIKE 'diabetes%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) > 65
-	")->fetchArray();
-    
-    $iznad65 = $query['broj'];
+		
+	$depresija = [
+		'ispod18' => $ispod18Dep,
+		'izmedju18i45' =>  $izmedju18i45Dep,
+		'izmedju45i65' => $izmedju45i65Dep,
+		'iznad65' => $iznad65Dep
+	];
 
-
-    // Depresija
-    $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
-FROM
-	patients
-	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
-	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
-	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
-WHERE
-	diagnoses.`latin` LIKE 'depressio%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) < 19
-	")->fetchArray();
-    
-    $ispod18D = $query['broj'];
-
-    $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
-FROM
-	patients
-	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
-	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
-	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
-WHERE
-	diagnoses.`latin` LIKE 'depressio%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) >= 19 AND 
-    TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) <= 65
-	")->fetchArray();
-    
-    $ispod65D = $query['broj'];
-
-    $query = $db->query("SELECT 
-	count(DISTINCT(appointments.patient_id)) AS \"broj\"
-FROM
-	patients
-	INNER JOIN appointments ON patients.patient_id = appointments.patient_id
-	INNER JOIN invoices ON appointments.appointment_id = invoices.appointment_id
-	INNER JOIN diagnoses ON invoices.diagnose_id = diagnoses.diagnose_id
-WHERE
-	diagnoses.`latin` LIKE 'depressio%' AND TIMESTAMPDIFF(YEAR, patients.date_of_birth, CURDATE()) > 65
-	")->fetchArray();
-    
-    $iznad65D = $query['broj'];
-
+	$bolesti['depresija'] = $depresija;
+	$_SESSION['reportP'] = $bolesti;
+	print_r($_SESSION['reportP']);
 
     $db->close();
 } catch (Exception $ex) {
@@ -119,7 +123,7 @@ if ($_SESSION['role'] == 7 || $_SESSION['role'] == 9) {
         <div class="col-lg-12">
         <div id="container" style="width:100%">
         <canvas id="canvas"></canvas>
-
+		<a href="./index.php?modul=printXMLGeneric"><button class= "btn-primary btn-sm" value="Sačuvaj">Sačuvaj</button></a>
 	</div>
 
 
@@ -139,11 +143,13 @@ if ($_SESSION['role'] == 7 || $_SESSION['role'] == 9) {
 
 <script>
     var ispod18 = <?php echo $ispod18; ?>;
-    var izmedju = <?php echo $ispod65; ?>;
+	var izmedju18 = <?php echo $izmedju18i45; ?>;
+	var izmedju45 = <?php echo $izmedju45i65; ?>;
     var iznad65 = <?php echo $iznad65; ?>;
-    var ispod18D = <?php echo $ispod18D; ?>;
-    var izmedjuD = <?php echo $ispod65D; ?>;
-    var iznad65D = <?php echo $iznad65D; ?>;
+    var ispod18Dep = <?php echo $ispod18Dep; ?>;
+	var izmedju18Dep = <?php echo $izmedju18i45Dep; ?>;
+	var izmedju45Dep = <?php echo $izmedju45i65Dep; ?>;
+    var iznad65Dep = <?php echo $iznad65Dep; ?>;
 
 		var color = Chart.helpers.color;
 		var barChartData = {
@@ -155,17 +161,26 @@ if ($_SESSION['role'] == 7 || $_SESSION['role'] == 9) {
 				borderWidth: 1,
 				data: [
                     ispod18,
-                    ispod18D
+                    ispod18Dep
                 ]
 			}, {
-				label: 'između 18 i 65',
+				label: 'između 18 i 45',
 				backgroundColor: color(window.chartColors.yellow).alpha(0.5).rgbString(),
 				borderColor: window.chartColors.blue,
 				borderWidth: 1,
 				data: [
-                    izmedju,
-                    izmedjuD
+                    izmedju18,
+                    izmedju18Dep
                 ]
+			}, {
+				label: 'između 45 i 65',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [
+                    izmedju45,
+                    izmedju45Dep
+				]
 			}, {
 				label: 'iznad 65',
 				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
@@ -173,7 +188,7 @@ if ($_SESSION['role'] == 7 || $_SESSION['role'] == 9) {
 				borderWidth: 1,
 				data: [
                     iznad65,
-                    iznad65D
+                    iznad65Dep
 				]
 			}]
 
@@ -191,7 +206,7 @@ if ($_SESSION['role'] == 7 || $_SESSION['role'] == 9) {
 					},
 					title: {
 						display: true,
-						text: 'Oboleli od dijabetesa'
+						text: 'Oboleli po godinama'
 					}
 				}
 			});

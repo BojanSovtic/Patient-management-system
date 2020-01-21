@@ -31,7 +31,6 @@ try {
     $_SESSION['patient'] = $query[0];
 
     if (!empty($_POST) && ($_POST['medicine'] != '' || $_POST['therapy'] != '')) {
-        // $query = $db->query('SELECT * FROM appointments WHERE appointment_id = ?', $id)->fetchArray();
 
         $diagnoseCode = $_POST['diagnoseCode'];
         $query = $db->query('SELECT diagnose_id FROM diagnoses WHERE code = ?', $diagnoseCode)->fetchArray();
@@ -143,12 +142,10 @@ try {
 
                         <?php
                         $db->close();
-/*
-foreach ($greske as $greska) {
-echo "<p class=\"error\">" . $greska . "</p>";
-};
- */
-echo $message . "    "; // $duration / 1000000;
+
+                        
+                
+echo $message . "    ";
  ?>
 
                 </div>
@@ -190,7 +187,8 @@ echo $message . "    "; // $duration / 1000000;
             var target = '<br><div><select name="medicine' + x + '" class="medicine form-control"><option value="">Izaberite lek</option>';
 
             for (var i = 0; i < data.length; i++) {
-                target += '<option value =" ' + data[i]['medicine_id'] + '">' + data[i]['name'] + '   ' + data[i]['utilization'] + '   ' + data[i]['manufacturer'] + '</option>';
+                target += '<option value =" ' + data[i]['medicine_id'] + '">' + data[i]['name'] + '   ' + data[i]['utilization'] 
+                + '   ' + data[i]['manufacturer'] + '</option>';
             }
 
             target += '</select><a href="#" class="delete">Obriši</a></div>';
@@ -209,7 +207,8 @@ echo $message . "    "; // $duration / 1000000;
             var target = '<br><br><div><select name="therapy' + x + '" class="therapy form-control"><option value="">Izaberite terapiju</option>';
 
             for (var i = 0; i < data2.length; i++) {
-                target += '<option value =" ' + data2[i]['therapy_id'] + '">' + data2[i]['description'] + ' Cena:  ' + data2[i]['price'] + '</option>';
+                target += '<option value =" ' + data2[i]['therapy_id'] + '">' + data2[i]['description'] + ' Cena:  ' + data2[i]['price'] 
+                + '</option>';
             }
 
             target += '</select><a href="#" class="delete">Delete</a></div>';

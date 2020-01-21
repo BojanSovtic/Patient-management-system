@@ -12,8 +12,9 @@
 
   <link href="assets/bootstrap.min.css" rel="stylesheet">
   <link href="assets/main.css" rel="stylesheet">
+  <link href="assets/jquery-ui.css" rel="stylesheet">
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
-
+  
   <script src="assets/jquery-3.4.1.min.js"></script>
   <script src="assets/bootstrap.bundle.min.js"></script>
 
@@ -28,6 +29,10 @@
 <!-- Chart.js -->
 <script src="assets/Chart.bundle.js"></script>
 <script src="assets/utils.js"></script>
+
+<!-- multiselect -->
+<link href="assets/jquery.multiselect.css" media="screen" rel="stylesheet" type="text/css">
+<script src="assets/jquery.multiselect.js" type="text/javascript"></script> 
 
 </head>
 <body>

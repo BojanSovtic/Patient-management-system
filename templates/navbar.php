@@ -35,7 +35,7 @@ if ($_SESSION['role'] != '') {
     }
     if ($_SESSION['role'] == '7' || $_SESSION['role'] == '9') {
         echo '<li class="nav-item">
-            <a class="nav-link" href="./index.php?modul=reports">Izveštaji</a>
+            <a class="nav-link" href="./index.php?modul=rDoctors">Izveštaji</a>
           </li>';
     }
     echo '<li class="nav-item">
